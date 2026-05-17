@@ -1,0 +1,74 @@
+{
+  "Software Engineer": {
+    "required_skills": ["Python", "JavaScript", "Git", "SQL", "Data Structures", "Algorithms"],
+    "optional_skills": ["React", "Node.js", "Docker", "AWS", "Kubernetes", "CI/CD", "TypeScript"],
+    "experience": "2+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "Data Scientist": {
+    "required_skills": ["Python", "Machine Learning", "Statistics", "SQL", "Data Analysis"],
+    "optional_skills": ["TensorFlow", "PyTorch", "Pandas", "NumPy", "Scikit-learn", "Deep Learning", "NLP", "Computer Vision"],
+    "experience": "2+ years",
+    "education": "Master's in Data Science, Statistics, or related field"
+  },
+  "Frontend Developer": {
+    "required_skills": ["JavaScript", "HTML", "CSS", "React", "Git"],
+    "optional_skills": ["TypeScript", "Vue.js", "Angular", "Redux", "Webpack", "REST API", "GraphQL", "Responsive Design"],
+    "experience": "2+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "Backend Developer": {
+    "required_skills": ["Python", "SQL", "REST API", "Git", "Database Design"],
+    "optional_skills": ["Django", "FastAPI", "Node.js", "PostgreSQL", "MongoDB", "Docker", "AWS", "Redis"],
+    "experience": "2+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "Full Stack Developer": {
+    "required_skills": ["JavaScript", "Python", "React", "SQL", "Git", "REST API"],
+    "optional_skills": ["Node.js", "TypeScript", "MongoDB", "PostgreSQL", "Docker", "AWS", "CI/CD"],
+    "experience": "3+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "DevOps Engineer": {
+    "required_skills": ["Linux", "Docker", "Kubernetes", "CI/CD", "Git", "AWS"],
+    "optional_skills": ["Terraform", "Ansible", "Jenkins", "Python", "Bash", "Monitoring", "Azure", "GCP"],
+    "experience": "3+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "Machine Learning Engineer": {
+    "required_skills": ["Python", "Machine Learning", "TensorFlow", "Deep Learning", "SQL"],
+    "optional_skills": ["PyTorch", "MLOps", "Docker", "Kubernetes", "AWS", "Computer Vision", "NLP"],
+    "experience": "3+ years",
+    "education": "Master's in Computer Science, Machine Learning, or related field"
+  },
+  "Data Analyst": {
+    "required_skills": ["SQL", "Excel", "Data Analysis", "Python", "Data Visualization"],
+    "optional_skills": ["Tableau", "Power BI", "Pandas", "Statistics", "R", "ETL"],
+    "experience": "1+ years",
+    "education": "Bachelor's in Statistics, Mathematics, or related field"
+  },
+  "Product Manager": {
+    "required_skills": ["Product Management", "Agile", "Communication", "Analytics", "Roadmap Planning"],
+    "optional_skills": ["JIRA", "SQL", "A/B Testing", "User Research", "Wireframing", "Data Analysis"],
+    "experience": "3+ years",
+    "education": "Bachelor's in Business, Engineering, or related field"
+  },
+  "QA Engineer": {
+    "required_skills": ["Testing", "Automation", "SQL", "Git", "Bug Tracking"],
+    "optional_skills": ["Selenium", "Python", "JavaScript", "API Testing", "Performance Testing", "CI/CD"],
+    "experience": "2+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "Cloud Engineer": {
+    "required_skills": ["AWS", "Linux", "Docker", "Networking", "Security"],
+    "optional_skills": ["Azure", "GCP", "Terraform", "Kubernetes", "Python", "Ansible"],
+    "experience": "3+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  },
+  "Mobile Developer": {
+    "required_skills": ["React Native", "JavaScript", "Git", "REST API", "Mobile Development"],
+    "optional_skills": ["iOS", "Android", "Swift", "Kotlin", "TypeScript", "Redux"],
+    "experience": "2+ years",
+    "education": "Bachelor's in Computer Science or related field"
+  }
+}

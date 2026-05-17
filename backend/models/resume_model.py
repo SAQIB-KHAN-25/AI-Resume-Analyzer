@@ -30,3 +30,4 @@ class ResumeUploadResponse(BaseModel):
     message: str
     resume_data: Optional[ResumeData] = None
     filename: str
+    resume_id: Optional[str] = None

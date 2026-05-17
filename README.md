@@ -1,283 +1,307 @@
-# AI Resume Analyzer
+<div align="center">
 
-An AI-powered resume analysis tool that extracts structured information from resumes and job descriptions, enabling intelligent matching and recommendations.
+# ResuMatch AI
 
-## 🚀 How to Run
+**Production-grade AI resume analyzer** — parse resumes, score them against one or many job descriptions, rank multiple candidates, and generate downloadable reports.
 
-**Terminal 1 - Backend:**
-```bash
-py -3.11 -m venv .venv311
-.\.venv311\Scripts\activate
-python -m uvicorn backend.main:app --reload --host localhost --port 8000
-```
+[![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](#)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)](#)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47a248?logo=mongodb&logoColor=white)](#)
+[![Tailwind](https://img.shields.io/badge/Tailwind-3-38bdf8?logo=tailwindcss&logoColor=white)](#)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#-license)
 
-**Terminal 2 - Frontend:**
-```bash
-cd frontend
-npm start
-```
-
-**Access:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
+</div>
 
 ---
 
-## 🎯 Week 2 Implementation Status
+## Highlights
 
-### ✅ Completed Features
+- **One-shot analysis pipeline** — upload a resume + JD(s), get back parsed data, skill match, ATS score, predicted roles, personalized recommendations, and a PDF report in a single request
+- **Multi-JD analysis** — compare one resume against up to five job descriptions and surface the best fit
+- **Bulk candidate comparison** — upload many resumes, rank them against one or more JDs
+- **Weighted ATS scoring** — keywords (45%) · skills (25%) · sections (15%) · experience (15%) with full breakdown
+- **Secure auth** — JWT sign-in/sign-up, bcrypt hashing, **OTP-based password reset** via Gmail SMTP, change-password flow
+- **Rate-limited auth surface** — sliding-window limiter on login, register, and all OTP endpoints
+- **Consistent error envelope** — every response carries a `request_id` that appears in server logs for easy tracing
+- **Security defaults** — CSP, XFO, Referrer-Policy, Permissions-Policy, TrustedHost, env-driven CORS
+- **Polished UI** — refined design system (buttons, cards, typography helpers), global gradient shell, password strength meter, live toast system, reduced-motion support
 
-- **Resume Upload & Parsing**
-  - PDF and DOCX file support
-  - Extract name, skills, education, and experience
-  - Extract projects, languages, hobbies
-  - Extract additional info (email, phone, LinkedIn, GitHub, certifications)
-  - Structured data output
+---
 
-- **Job Description Processing**
-  - Text input for job descriptions
-  - File upload support (PDF, DOCX, TXT)
-  - Skill extraction
-  - Keyword extraction using NLP
+## Tech stack
 
-- **Backend APIs**
-  - `POST /api/upload_resume` - Upload and parse resume
-  - `POST /api/upload_jd` - Process job description text
-  - `POST /api/upload_jd_file` - Upload and process job description file
-  - Health check endpoint
+| Layer | Stack |
+|---|---|
+| Frontend | React 18 · React Scripts · TailwindCSS · Lucide icons · Axios · react-hot-toast |
+| Backend | FastAPI · Uvicorn · Pydantic v2 · python-jose (JWT) · passlib+bcrypt · Motor (async Mongo driver) |
+| Data | MongoDB Atlas · PDF/DOCX parsing (pdfplumber, python-docx, wordninja) |
+| AI (optional) | OpenAI API — powers `/api/ai/*` bonus endpoints (cover letter, interview questions, resume-strength analysis) |
+| Reports | ReportLab (PDF generation) |
+| Email | Gmail SMTP (for OTP password reset) |
 
-- **Frontend UI**
-  - Resume upload page with file validation
-  - Job description input page
-  - Results display for both resume and JD
-  - Responsive design
+---
 
-## 🏗️ Project Structure
+## Project structure
 
 ```
-ai-resume-analyzer/
+.
+├── backend/
+│   ├── main.py                      FastAPI app, middleware, CORS, security headers
+│   ├── database.py                  Motor client + TTL indexes for OTP resets
+│   ├── models/                      Pydantic request/response + DB models
+│   ├── routers/
+│   │   ├── auth_routes.py           Register, login, OTP reset, change password (rate-limited)
+│   │   ├── analysis_routes.py       /api/analyze (single + bulk), history, report download
+│   │   ├── profile_routes.py        Persistent user profile (resume upload, delete, stream)
+│   │   └── ai_routes.py             Optional OpenAI-backed features
+│   ├── services/
+│   │   ├── resume_parser.py         PDF/DOCX → structured resume dict
+│   │   ├── jd_processor.py          JD text/file → skills + keywords
+│   │   ├── skill_extractor.py
+│   │   ├── matching_engine.py       Case-insensitive, synonym-aware match scoring
+│   │   ├── ats_scoring.py           4-component weighted ATS calculator
+│   │   ├── role_prediction.py       Top-3 role fit from skills
+│   │   ├── recommendation_engine.py Missing-skill → study plan & gap tips
+│   │   ├── report_generator.py      ReportLab PDF composer
+│   │   ├── email_service.py         Gmail SMTP sender for OTPs
+│   │   ├── verdict_engine.py        Human-readable verdict ("Ready", "Needs work", etc.)
+│   │   └── pipeline.py              Orchestrates: parse → match → ATS → roles → recs → verdict
+│   ├── utils/
+│   │   ├── rate_limit.py            In-memory sliding-window rate limiter
+│   │   └── file_handler.py
+│   └── data/                        skills.json · synonyms.json · role_profiles.json
 │
-├── frontend/                     # React application
-│   ├── public/
-│   │   └── index.html
-│   ├── src/
-│   │   ├── components/          # UI components
-│   │   │   ├── ResumeUpload.js
-│   │   │   ├── JDInput.js
-│   │   │   └── ...
-│   │   ├── pages/               # Page views
-│   │   ├── services/            # API calls
-│   │   │   └── api.js
-│   │   ├── styles/
-│   │   │   └── main.css
-│   │   ├── App.js
-│   │   └── index.js
-│   └── package.json
+├── frontend/
+│   ├── tailwind.config.js           Design tokens (brand + accent ramps, shadows, gradients)
+│   ├── postcss.config.js
+│   └── src/
+│       ├── App.jsx                  Auth gate + tab routing + Toaster
+│       ├── styles/main.css          Component layer (.btn, .card, .badge, .input, typography)
+│       ├── services/api.js          Axios client with auth interceptor
+│       ├── components/
+│       │   ├── ui/                  Card, ScoreCard, ProgressBar, Badge, EmptyState, Spinner
+│       │   ├── layout/
+│       │   │   ├── AppShell.jsx     Sidebar + gradient shell + profile/change-password modal
+│       │   │   └── PageHeader.jsx   Reusable page header (eyebrow, title, subtitle, actions)
+│       │   ├── auth/
+│       │   │   ├── AuthPage.jsx     Split-hero login/register + password strength meter
+│       │   │   └── ForgotPasswordModal.jsx
+│       │   └── analysis/
+│       │       └── JdListInput.jsx  Multi-JD input (paste or upload)
+│       └── pages/
+│           ├── Home.jsx             Landing with feature grid and workflow steps
+│           ├── Dashboard.jsx        Profile view + resume upload
+│           ├── Analyze.jsx          New analysis (1 resume × N JDs)
+│           ├── BulkAnalyze.jsx      Compare resumes (M resumes × N JDs)
+│           └── History.jsx          All past analyses, bulk-delete, PDF download
 │
-├── backend/                     # FastAPI backend
-│   ├── main.py                  # FastAPI entry point
-│   ├── routers/                 # API endpoints
-│   │   ├── resume_routes.py
-│   │   └── jd_routes.py
-│   ├── services/                # AI processing modules
-│   │   ├── resume_parser.py
-│   │   ├── jd_processor.py
-│   │   └── skill_extractor.py
-│   └── models/                  # Data models
-│       ├── resume_model.py
-│       └── jd_model.py
-│
-├── requirements.txt             # Python dependencies
+├── tests/
+├── requirements.txt
+├── .env.example
 └── README.md
 ```
 
-## 🚀 Getting Started
+---
+
+## Quick start
 
 ### Prerequisites
+- Python 3.11 or 3.12
+- Node.js 18+
+- A MongoDB Atlas connection string (free tier works)
+- *(optional)* OpenAI API key for `/api/ai/*` endpoints
+- *(optional)* Gmail account + App Password for OTP password reset
 
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
+### 1. Configure
 
-### Backend Setup
-
-1. **Navigate to project root**
-   ```bash
-   cd "AI Resume Analyzer demo"
-   ```
-
-2. **Create and activate virtual environment (Windows / PowerShell)**
-   ```bash
-  py -3.11 -m venv .venv311
-  .\.venv311\Scripts\activate
-   ```
-
-3. **Install Python dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Download spaCy model**
-   ```bash
-   python -m spacy download en_core_web_sm
-   ```
-
-5. **Run the backend server from project root**
-   ```bash
-  python -m uvicorn backend.main:app --reload --host localhost --port 8000
-   ```
-
-   The API will be available at `http://localhost:8000`
-   
-   API Documentation: `http://localhost:8000/docs`
-
-### Frontend Setup
-
-1. **Navigate to frontend directory**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm start
-   ```
-
-   The app will open at `http://localhost:3000`
-
-## 📋 API Endpoints
-
-### Resume Upload
-```
-POST /api/upload_resume
-Content-Type: multipart/form-data
-
-Response:
-{
-  "message": "Resume uploaded and parsed successfully",
-  "resume_data": {
-    "name": "John Doe",
-    "skills": ["Python", "SQL", "Machine Learning"],
-    "education": "B.Tech, M.Tech",
-    "experience": "3 years",
-    "projects": ["AI Resume Analyzer", "E-commerce Platform"],
-    "languages": ["Python", "JavaScript", "English", "Hindi"],
-    "hobbies": ["Reading", "Coding", "Photography"],
-    "additional_info": {
-      "email": "john.doe@example.com",
-      "phone": "+1234567890",
-      "linkedin": "linkedin.com/in/johndoe",
-      "github": "github.com/johndoe",
-      "certifications": ["AWS Certified", "Python Expert"]
-    }
-  },
-  "filename": "resume.pdf"
-}
+```bash
+cp .env.example .env
 ```
 
-### Job Description Processing
-```
-POST /api/upload_jd
-Content-Type: application/json
+Edit `.env` with your real values. Minimum required:
 
-Body:
-{
-  "job_description": "We need a backend developer with Python, SQL and Docker experience..."
-}
+| Variable | Purpose |
+|---|---|
+| `MONGODB_URL`              | Atlas connection string |
+| `JWT_SECRET_KEY`           | Any 32+ char random string |
+| `CORS_ALLOWED_ORIGINS`     | `http://localhost:3000` for dev |
 
-Response:
-{
-  "message": "Job description processed successfully",
-  "jd_data": {
-    "required_skills": ["Python", "SQL", "Docker"],
-    "keywords": ["backend", "developer", "experience", "API"]
-  }
-}
-```
+For forgot-password OTP emails, also set:
 
-### Job Description File Upload
-```
-POST /api/upload_jd_file
-Content-Type: multipart/form-data
+| Variable | Purpose |
+|---|---|
+| `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | Gmail + [App Password](https://myaccount.google.com/apppasswords) |
 
-Response:
-{
-  "message": "Job description file processed successfully",
-  "jd_data": {
-    "required_skills": ["Python", "SQL", "Docker"],
-    "keywords": ["backend", "developer", "experience", "API"]
-  }
-}
+### 2. Backend
+
+```bash
+python -m venv .venv
+# Windows:
+.venv\Scripts\activate
+# macOS/Linux:
+source .venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn backend.main:app --reload
 ```
 
-## 🧪 Testing
+- API:  http://localhost:8000
+- Docs: http://localhost:8000/docs
+- Health: http://localhost:8000/health
 
-### Test Resume Upload
+### 3. Frontend
 
-1. Prepare a test resume (PDF or DOCX)
-2. Open `http://localhost:3000`
-3. Click "Upload Resume" tab
-4. Select your resume file
-5. Click "Upload Resume"
-6. View extracted data
+```bash
+cd frontend
+npm install
+npm start
+```
 
-### Test Job Description
-
-1. Open `http://localhost:3000`
-2. Click "Job Description Processing" tab
-3. Choose input method:
-   - **Paste Text**: Enter job description directly
-   - **Upload File**: Upload PDF, DOCX, or TXT file
-4. Click "Analyze Job Description"
-5. View extracted skills and keywords
-
-## 🛠️ Technologies Used
-
-### Backend
-- **FastAPI** - Modern web framework
-- **pdfplumber** - PDF text extraction
-- **python-docx** - DOCX parsing
-- **spaCy** - NLP for keyword extraction
-- **Pydantic** - Data validation
-
-### Frontend
-- **React** - UI framework
-- **Axios** - HTTP client
-- **CSS3** - Styling
-
-## 📝 Week 2 Deliverables Checklist
-
-- ✅ Resume upload working
-- ✅ Resume text extracted
-- ✅ Resume skills detected
-- ✅ JD input working
-- ✅ JD skills extracted
-- ✅ Backend APIs working
-- ✅ Frontend forms working
-
-## 🔜 Next Steps (Week 3+)
-
-- Matching engine for resume-JD comparison
-- ATS scoring algorithm
-- Role prediction
-- Recommendation engine
-- Report generation
-- Charts and visualizations
-
-## 📄 License
-
-This project is part of a learning implementation.
-
-## 👥 Contributors
-
-Your Team
+Open http://localhost:3000.
 
 ---
 
-**Note:** This is Week 2 implementation. More features will be added in upcoming weeks.
+## API surface
+
+> Full, live OpenAPI schema at **`GET /openapi.json`** or explore it at **`/docs`**.
+
+### Authentication
+
+| Method | Path | Purpose | Rate limit |
+|---|---|---|---|
+| `POST` | `/api/auth/register`         | Sign up               | 5 / min |
+| `POST` | `/api/auth/login`            | Sign in (JWT)         | 10 / min |
+| `POST` | `/api/auth/change-password`  | Change (authenticated)| 5 / min |
+| `POST` | `/api/auth/forgot-password`  | Start OTP flow        | 5 / 5min |
+| `POST` | `/api/auth/verify-otp`       | Verify OTP → reset token | 10 / min |
+| `POST` | `/api/auth/reset-password`   | Consume reset token   | 5 / min |
+| `PUT`  | `/api/auth/users/{id}`       | Update profile info   | — |
+
+### Resume profile
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST`   | `/api/profile/upload`      | Upload / replace user resume |
+| `GET`    | `/api/profile`             | Fetch parsed profile |
+| `DELETE` | `/api/profile`             | Delete stored profile |
+| `GET`    | `/api/profile/resume/file` | Stream original resume bytes |
+
+### Analysis pipeline
+
+| Method | Path | Purpose |
+|---|---|---|
+| `POST`   | `/api/analyze`                      | **Single resume** × one JD → full analysis |
+| `POST`   | `/api/analyze/bulk`                 | **Many resumes** × one JD → ranked results |
+| `GET`    | `/api/analyze/history`              | User's history |
+| `DELETE` | `/api/analyze/history/{analysis_id}`| Delete one |
+| `POST`   | `/api/analyze/history/delete`       | Bulk-delete or delete-all |
+| `GET`    | `/api/analyze/{analysis_id}/report` | Download PDF report |
+
+### Optional AI endpoints
+
+| Path | Returns |
+|---|---|
+| `/api/ai/status`, `/api/ai/features` | Capability probing |
+| `/api/ai/cover-letter`               | Tailored cover letter |
+| `/api/ai/interview-questions`        | Top N interview questions |
+| `/api/ai/resume-strength`            | GPT-scored strength analysis |
+| `/api/ai/improvements`               | Targeted suggestions |
+| `/api/ai/predict-roles`              | LLM-based role predictions |
+| `/api/ai/semantic-match`             | Embedding-based skill match |
+
+---
+
+## Pipeline flow
+
+```
+POST /api/analyze  (multipart: resume_file + jd_text | jd_file)
+        │
+        ├──► parse_resume()          PDF/DOCX → structured dict
+        ├──► process_job_description() text/file → skills + keywords
+        │
+        ▼
+   pipeline.run_full_analysis()
+        ├── match score        (matching_engine)
+        ├── ATS score          (ats_scoring; 4 weighted components)
+        ├── role prediction    (role_prediction)
+        ├── recommendations    (recommendation_engine)
+        └── verdict            (verdict_engine — "Ready", "Almost there", "Needs work", …)
+        │
+        ▼
+   Persist → MongoDB (resumes · job_descriptions · analysis_results)
+        │
+        ▼
+   AnalysisResponse → frontend renders result dashboard
+```
+
+---
+
+## MongoDB collections
+
+- **users** — auth records. Unique index on `email`.
+- **user_profiles** — one resume per user (dashboard view).
+- **resumes** — every uploaded resume + parsed `resume_data`.
+- **job_descriptions** — JDs with parsed `jd_data`.
+- **analysis_results** — per-analysis snapshot (scores, missing skills, recs, roles, verdict).
+- **password_resets** — active OTP sessions, with TTL index so entries auto-expire.
+
+Indexes are ensured on startup — see `backend/database.py`.
+
+---
+
+## Security
+
+| Control | Where |
+|---|---|
+| **JWT auth** with env-driven secret | `backend/routers/auth_routes.py` |
+| **bcrypt** password hashing via passlib | `auth_routes.py` |
+| **Rate limiting** (sliding window) on all auth endpoints | `backend/utils/rate_limit.py` |
+| **OTP-based password reset** with TTL, max attempts, resend cooldown | `auth_routes.py`, `email_service.py` |
+| **Security headers** (CSP, XFO, nosniff, Referrer-Policy, Permissions-Policy) | `main.py` middleware |
+| **Trusted hosts + env-driven CORS** | `main.py` |
+| **Consistent error envelope** with `request_id` in every response | `main.py` exception handlers |
+| **No error leakage in production** — details hidden when `APP_ENV=production` | `main.py` |
+| **Max upload size** configurable via `MAX_UPLOAD_SIZE_BYTES` | — |
+| **Auto-logout** on stale/invalid JWT from any route | `frontend/src/services/api.js` interceptor |
+
+Before deploying to production:
+1. Set `JWT_SECRET_KEY` to a long, random string (at least 32 chars).
+2. Set `APP_ENV=production` to hide internal error messages.
+3. Set `MONGODB_REQUIRED=true` so the server fails fast if Mongo is unreachable.
+4. Lock down `CORS_ALLOWED_ORIGINS` and `TRUSTED_HOSTS` to your real domains.
+5. Enable `TRUST_PROXY_HEADERS=true` only if running behind a trusted reverse proxy.
+
+---
+
+## Deployment
+
+- **Backend**: Render, Railway, Fly.io, or any Python-capable host. Deploy from a `gunicorn` + `uvicorn.workers.UvicornWorker` config for production. Provide all env vars from `.env.example`.
+- **Frontend**: `npm run build` → deploy the generated `frontend/build/` to Vercel / Netlify / Cloudflare Pages. Set `REACT_APP_API_BASE_URL` at build time to your backend URL.
+- **Database**: MongoDB Atlas (free M0 tier is sufficient to start).
+
+---
+
+## Testing
+
+```bash
+pytest tests/
+```
+
+Currently covers edge cases around file validation, JWT auth, and pipeline output shape. A more exhaustive test suite is on the roadmap.
+
+---
+
+## Roadmap
+
+- [ ] Unit-test coverage for `pipeline.run_full_analysis`
+- [ ] End-to-end Playwright tests for the upload → analyze → download flow
+- [ ] Containerized deployment (Dockerfile + `docker-compose.yml`)
+- [ ] Migration to Vite (CRA is deprecated)
+- [ ] Redis-backed rate limiter for multi-worker deployments
+- [ ] Stripe-backed billing tier for premium AI features
+
+---
+
+## License
+
+[MIT](LICENSE) © 2026 ResuMatch AI
