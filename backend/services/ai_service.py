@@ -29,7 +29,11 @@ AI_PROVIDER = (os.getenv("AI_PROVIDER") or "auto").strip().lower()
 
 # OpenAI
 _openai_api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=_openai_api_key) if _openai_api_key else None
+try:
+    client = OpenAI(api_key=_openai_api_key) if _openai_api_key else None
+except TypeError as exc:
+    logger.warning("OpenAI client initialization failed; disabling OpenAI features: %s", exc)
+    client = None
 DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 # Gemini (Google AI Studio) — called via REST so we don't depend on the
