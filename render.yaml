@@ -21,6 +21,36 @@ services:
         value: https://ai-resume-analyzer-frontend.onrender.com
       - key: TRUSTED_HOSTS
         value: ai-resume-analyzer-backend.onrender.com,localhost,127.0.0.1
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-flash-latest
+      - key: AI_PROVIDER
+        value: auto
+      - key: OTP_TTL_MINUTES
+        value: "10"
+      - key: OTP_MAX_ATTEMPTS
+        value: "5"
+      - key: OTP_RESEND_COOLDOWN_SECONDS
+        value: "60"
+      - key: RESET_TOKEN_TTL_MINUTES
+        value: "10"
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      - key: SMTP_USE_SSL
+        value: "false"
   - type: web
     name: ai-resume-analyzer-frontend
     runtime: static
