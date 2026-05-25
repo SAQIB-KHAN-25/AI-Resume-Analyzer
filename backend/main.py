@@ -74,7 +74,8 @@ allow_origin_regex = os.getenv(
     "CORS_ALLOWED_ORIGIN_REGEX",
     r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$"
 )
-raw_trusted_hosts = os.getenv("TRUSTED_HOSTS", "localhost,127.0.0.1")
+default_trusted_hosts = "*.onrender.com,localhost,127.0.0.1" if APP_ENV == "production" else "localhost,127.0.0.1"
+raw_trusted_hosts = os.getenv("TRUSTED_HOSTS", default_trusted_hosts)
 trusted_hosts = [host.strip() for host in raw_trusted_hosts.split(",") if host.strip()]
 
 app.add_middleware(RequestContextMiddleware)
