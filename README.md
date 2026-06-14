@@ -4,6 +4,8 @@
 
 **Production-grade AI resume analyzer** — parse resumes, score them against one or many job descriptions, rank multiple candidates, and generate downloadable reports.
 
+[Live demo](https://ai-resume-analyzer-frontend-px1q.onrender.com)
+
 [![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)](#)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688?logo=fastapi&logoColor=white)](#)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47a248?logo=mongodb&logoColor=white)](#)
@@ -275,6 +277,7 @@ Before deploying to production:
 
 ## Deployment
 
+- **Live demo**: [https://ai-resume-analyzer-frontend-px1q.onrender.com](https://ai-resume-analyzer-frontend-px1q.onrender.com)
 - **Backend**: Render, Railway, Fly.io, or any Python-capable host. Deploy from a `gunicorn` + `uvicorn.workers.UvicornWorker` config for production. Provide all env vars from `.env.example`.
 - **Frontend**: `npm run build` → deploy the generated `frontend/build/` to Vercel / Netlify / Cloudflare Pages. Set `REACT_APP_API_BASE_URL` at build time to your backend URL.
 - **Database**: MongoDB Atlas (free M0 tier is sufficient to start).
